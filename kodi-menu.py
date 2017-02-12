@@ -225,13 +225,14 @@ if sys.argv[2].lower() == "addons":
     n = 0
     for p in r:
         if p["enabled"] == True:
+            description = p["description"].replace("'", "''")
             result = cursor.execute("""
                 INSERT INTO files
                   (keyword, file, label, num, type, desc)
-                  VALUES ("last", "%s", "%s", %d, "%s", "%s");
+                  VALUES ("last", "%s", "%s", %d, "%s", '%s');
                 """ % (
                   "plugin://" + p["addonid"] + "/",
-                  getLabel(p), n, "directory", p["description"]))
+                  getLabel(p), n, "directory", description))
             print ("%2d. %s" % (n, getLabel(p)))
         n += 1
     connect.commit()
