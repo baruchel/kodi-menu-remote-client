@@ -229,10 +229,11 @@ if sys.argv[2].lower() == "addons":
             result = cursor.execute("""
                 INSERT INTO files
                   (keyword, file, label, num, type, desc)
-                  VALUES ("last", "%s", "%s", %d, "%s", '%s');
+                  VALUES ("last", "%s", '%s', %d, "%s", '%s');
                 """ % (
                   "plugin://" + p["addonid"] + "/",
-                  getLabel(p), n, "directory", description))
+                  getLabel(p).replace("'","''"), n,
+                  "directory", description))
             print ("%2d. %s" % (n, getLabel(p)))
         n += 1
     connect.commit()
@@ -300,15 +301,17 @@ if len(sys.argv) == 3:
             r = r["result"]["files"]
             n = 0
             for p in r:
-                if "description" not in p:
-                    p["description"] = ""
+                description = ""
+                if "description" in p:
+                    description = p["description"].replace("'","''")
                 result = cursor.execute("""
                     INSERT INTO files
                       (keyword, file, label, num, type, desc)
-                      VALUES ("last", "%s", "%s", %d, "%s", "%s");
+                      VALUES ("last", "%s", '%s', %d, "%s", '%s');
                     """ % (
                       p["file"],
-                      getLabel(p), n, p["filetype"], p["description"]))
+                      getLabel(p).replace("'","''"), n,
+                      p["filetype"], description))
                 print ("%2d. %s" % (n, getLabel(p)))
                 n += 1
         else:
